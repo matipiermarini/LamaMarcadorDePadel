@@ -1,0 +1,5 @@
+{
+  "name": "Padel Scoreboard Live",
+  "description": "A minimalist and eye-catching web application to keep score in live Padel matches, optimized for streaming overlays. It features traditional scoring, a 'Golden Point' option, and a configurable third set super tiebreak.",
+  "requestFramePermissions": []
+}
