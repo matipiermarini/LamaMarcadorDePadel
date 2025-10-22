@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useScore } from './hooks/useScore';
+import { useScore } from './hooks/useScore.ts';
 import ControlButton from './components/ControlButton';
 import UndoIcon from './components/icons/UndoIcon';
 import SettingsPanel from './components/SettingsPanel';
