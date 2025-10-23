@@ -215,7 +215,11 @@ const App: React.FC = () => {
   }
 
   return (
+    
     <div className="font-sans w-full max-w-4xl mx-auto text-gray-800">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-orange-600 mb-4 mt-6">
+        Marcador de Pádel
+      </h1>
       <div className="relative">
         <SettingsPanel
           state={state}
@@ -254,20 +258,20 @@ const App: React.FC = () => {
         </div>
 
       </div>
-
+      
       {winner && (
-        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center rounded-lg z-20 text-white">
-          <h2 className="text-2xl md:text-4xl font-black mb-2">GANADOR</h2>
-          <p className="text-xl md:text-3xl font-bold text-orange-400 text-center px-4">
-            {winner === 'A' ? `${teamA.player1.name} / ${teamA.player2.name}` : `${teamB.player1.name} / ${teamB.player2.name}`}
-          </p>
-           <div className="mt-6">
-            <ControlButton onClick={handleReset} variant="primary">
-                Nuevo Partido
-            </ControlButton>
-           </div>
+      <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center rounded-lg z-20 text-white">
+        <h2 className="text-2xl md:text-4xl font-black mb-2">GANADOR</h2>
+        <p className="text-xl md:text-3xl font-bold text-orange-400 text-center px-4">
+          {winner === 'A' ? `${teamA.player1.name} / ${teamA.player2.name}` : `${teamB.player1.name} / ${teamB.player2.name}`}
+        </p>
+        <div className="mt-6">
+          <ControlButton onClick={handleReset} variant="primary">
+              Nuevo Partido
+          </ControlButton>
         </div>
-      )}
+      </div>
+    )}
 
       <div className="mt-3 max-w-3xl mx-auto">
           <ControlButton onClick={undo} variant="secondary" className="flex items-center justify-center gap-2 w-full">
