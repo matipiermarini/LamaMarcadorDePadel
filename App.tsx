@@ -9,7 +9,7 @@ import type { TeamState, ThirdSetMode } from './types';
 
 const TeamRow: React.FC<{ team: TeamState; isServing: boolean; }> = ({ team, isServing }) => (
   <div className="pl-2 sm:pl-4 pr-2 py-2 h-full flex items-center gap-2">
-    <div className="flex flex-col justify-center flex-grow overflow-hidden">
+    <div className="text-left flex flex-col justify-center flex-grow overflow-hidden">
       <p className="font-bold text-sm sm:text-base md:text-lg uppercase truncate">{team.player1.name}</p>
       <p className="font-bold text-sm sm:text-base md:text-lg uppercase truncate">{team.player2.name}</p>
     </div>
@@ -240,22 +240,42 @@ const App: React.FC = () => {
               <div></div>
             </div>
             
-            {/* Team A */}
+            {/* Team A - Solo puntajes, sin botón + */}
             <div className={`${gridLayout} h-16 sm:h-20 border-b-2 border-orange-400`}>
               <TeamRow team={teamA} isServing={server === 'A'} />
               {[0, 1, 2].map(i => <ScoreCell key={i} score={getSetScore('A', i)} />)}
               <ScoreCell score={isTiebreak ? teamA.points : teamA.points} className={gameScoreClass} animate={pointAnimation === 'A'} />
-              <AddPointButton onClick={() => addPoint('A')} disabled={!!winner} />
+              <div className="flex items-center justify-center h-full"> {/* Espacio vacío donde estaba el botón */}</div>
             </div>
 
-            {/* Team B */}
+            {/* Team B - Solo puntajes, sin botón + */}
             <div className={`${gridLayout} h-16 sm:h-20`}>
               <TeamRow team={teamB} isServing={server === 'B'} />
               {[0, 1, 2].map(i => <ScoreCell key={i} score={getSetScore('B', i)} />)}
               <ScoreCell score={isTiebreak ? teamB.points : teamB.points} className={gameScoreClass} animate={pointAnimation === 'B'} />
-              <AddPointButton onClick={() => addPoint('B')} disabled={!!winner} />
+              <div className="flex items-center justify-center h-full"> {/* Espacio vacío donde estaba el botón */}</div>
             </div>
         </div>
+        
+      {/* Botones para sumar puntos, debajo del marcador */}
+      <div className="mt-4 flex justify-center gap-4">
+        <button 
+          onClick={() => addPoint('A')} 
+          disabled={!!winner}
+          className="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-bold transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-30 flex-1 disabled:cursor-not-allowed"
+          aria-label={`Sumar punto a ${teamA.player1.name} / ${teamA.player2.name}`}
+        >
+          {teamA.player1.name} / {teamA.player2.name}
+        </button>
+        <button 
+          onClick={() => addPoint('B')} 
+          disabled={!!winner}
+          className="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-bold transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-30 flex-1 disabled:cursor-not-allowed"
+          aria-label={`Sumar punto a ${teamB.player1.name} / ${teamB.player2.name}`}
+        >
+          {teamB.player1.name} / {teamB.player2.name}
+        </button>
+      </div>
 
       </div>
       
