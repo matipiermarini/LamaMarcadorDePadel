@@ -4,6 +4,7 @@ import ControlButton from './components/ControlButton';
 import UndoIcon from './components/icons/UndoIcon';
 import SettingsPanel from './components/SettingsPanel';
 import type { TeamState, ThirdSetMode } from './types';
+import ResetIcon from './components/icons/ResetIcon.tsx';
 
 // --- SUB-COMPONENTS ---
 
@@ -46,10 +47,16 @@ const Instructions: React.FC = () => (
         <h2 className="text-2xl font-bold text-orange-600 mb-4">Cómo Usar el Marcador</h2>
         <ul className="list-disc list-inside space-y-3">
             <li>
-                <strong>Configuración:</strong> Completa los nombres y el título del partido para empezar. Puedes cambiarlo después con el ícono de engranaje (⚙️).
+                <strong>Configuración:</strong> Completa los nombres y el título del partido para empezar. Puedes cambiarlo después haciendo clic en el botón <strong>“Editar”</strong> debajo del marcador.
             </li>
             <li>
-                <strong>Sumar Puntos:</strong> Haz clic en el botón <strong>+</strong> al lado de la pareja que ganó el punto.
+                <strong>Formato de tercer set:</strong> Debes seleccionar uno de los dos formatos para el tercer set que hay "tercer set normal" o "super Tiebreak a 11 por diferencia de 2".
+            </li>
+            <li>
+                <strong>Elegir sacador:</strong> Luego de presionar "Comenzar partido", debes seleccionar cual sera la pareja que saca primero.
+            </li>
+            <li>
+                <strong>Sumar Puntos:</strong> Haz clic en el botón con fondo naranja con los nombres de las parejas quiera sumar un punto.
             </li>
             <li>
                 <strong>Punto de Oro:</strong> En 40-40, la casilla de "GAME" se ilumina en dorado. Quien gane el siguiente punto, gana el juego.
@@ -92,7 +99,7 @@ const SetupScreen: React.FC<{
     }, [state]);
 
     return (
-        <div className="font-sans w-full max-w-lg mx-auto text-gray-800">
+        <div className="font-sans w-full max-w-xl mx-auto text-gray-800 relative overflow-x-hidden">
             <div className="bg-white rounded-lg shadow-2xl p-8">
                 <h1 className="text-3xl font-bold text-orange-600 mb-6 text-center">Configurar Partido</h1>
                 <div className="space-y-4">
@@ -141,6 +148,7 @@ const App: React.FC = () => {
   } = useScore();
 
   const [appPhase, setAppPhase] = useState<'setup' | 'serverSelection' | 'match'>('setup');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { teamA, teamB, winner, server, matchTitle, setScores, currentSet } = state;
   
   const handleReset = () => {
@@ -165,8 +173,13 @@ const App: React.FC = () => {
 
   const isPuntoDeOro = teamA.points === '40' && teamB.points === '40' && !isTiebreak;
   const gameScoreClass = isPuntoDeOro ? 'bg-gradient-to-b from-yellow-400 to-amber-600 text-black' : '';
-  
-  const gridLayout = "grid grid-cols-[minmax(0,_3fr)_repeat(3,_minmax(0,_1fr))_minmax(0,_1.2fr)_auto] text-center";
+  const EditIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7L8 12" />
+  </svg>
+);
+  const gridLayout = "grid grid-cols-[minmax(0,_2fr)_repeat(3,_minmax(0,_1fr))_minmax(0,_1fr)_auto] text-center";
 
   const getSetScore = (team: 'A' | 'B', setIndex: number): string | number => {
     const teamGames = team === 'A' ? teamA.games : teamB.games;
@@ -221,13 +234,7 @@ const App: React.FC = () => {
         Marcador de Pádel
       </h1>
       <div className="relative">
-        <SettingsPanel
-          state={state}
-          onSetPlayerName={setPlayerName}
-          onSetMatchTitle={setMatchTitle}
-          onSetThirdSetMode={setThirdSetMode}
-          onReset={handleReset}
-        />
+        
         
         <div className="bg-orange-900 text-white border-2 border-orange-400 rounded-lg shadow-2xl overflow-hidden">
             {/* Header */}
@@ -298,7 +305,108 @@ const App: React.FC = () => {
               <UndoIcon /> Deshacer
           </ControlButton>
       </div>
+
+            {/* Botón Editar */}
+            {/* Botón Editar con ControlButton */}
+      <div className="mt-2 max-w-3xl mx-auto">
+        <ControlButton 
+          onClick={() => setIsSettingsOpen(!isSettingsOpen)} 
+          variant="secondary" 
+          className="w-full flex items-center justify-center gap-2"
+        >
+          <EditIcon /> Editar
+        </ControlButton>
+      </div>
       
+            {/* Panel de configuración que se despliega hacia abajo */}
+      {isSettingsOpen && (
+        <div className="mt-2 bg-white/95 backdrop-blur-md p-4 rounded-lg shadow-2xl border border-gray-200 w-full max-w-3xl mx-auto">
+          <h3 className="font-bold text-gray-700 mb-3 text-lg">Opciones</h3>
+          
+          <div className="space-y-4">
+            {/* Título del Partido */}
+            <SettingsInput label="Título del Partido" value={state.matchTitle} onChange={setMatchTitle} />
+            
+            <hr className="my-3" />
+            
+            {/* Pareja A - Jugadores en fila */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Pareja A - Jugador 1</label>
+                <input 
+                  type="text" 
+                  value={state.teamA.player1.name} 
+                  onChange={(e) => setPlayerName('A', 1, e.target.value)} 
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Pareja A - Jugador 2</label>
+                <input 
+                  type="text" 
+                  value={state.teamA.player2.name} 
+                  onChange={(e) => setPlayerName('A', 2, e.target.value)} 
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                />
+              </div>
+            </div>
+
+            <hr className="my-3" />
+            
+            {/* Pareja B - Jugadores en fila */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Pareja B - Jugador 1</label>
+                <input 
+                  type="text" 
+                  value={state.teamB.player1.name} 
+                  onChange={(e) => setPlayerName('B', 1, e.target.value)} 
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Pareja B - Jugador 2</label>
+                <input 
+                  type="text" 
+                  value={state.teamB.player2.name} 
+                  onChange={(e) => setPlayerName('B', 2, e.target.value)} 
+                  className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                />
+              </div>
+            </div>
+
+            <hr className="my-3" />
+            
+            {/* Modo 3er Set */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600">Modo 3er Set</label>
+              <div className="flex gap-2 mt-1">
+                <button onClick={() => setThirdSetMode('superTiebreak')} className={`flex-1 py-1 text-sm rounded ${state.thirdSetMode === 'superTiebreak' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'}`}>Super Tiebreak</button>
+                <button onClick={() => setThirdSetMode('normal')} className={`flex-1 py-1 text-sm rounded ${state.thirdSetMode === 'normal' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'}`}>Normal</button>
+              </div>
+            </div>
+
+            {/* Botones: Aceptar y Reiniciar */}
+            <div className="flex gap-2 pt-2">
+              <ControlButton 
+                onClick={() => setIsSettingsOpen(false)} 
+                variant="secondary" 
+                className="flex-1 flex items-center justify-center gap-2"
+              >
+                ✔️ Aceptar
+              </ControlButton>
+              <ControlButton 
+                onClick={handleReset} 
+                variant="secondary" 
+                className="flex-1 flex items-center justify-center gap-2"
+              >
+                <ResetIcon /> Reiniciar
+              </ControlButton>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Instructions />
     </div>
   );
