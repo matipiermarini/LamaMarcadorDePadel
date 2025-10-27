@@ -241,7 +241,7 @@ const gridLayout = "grid grid-cols-[1fr_56px_56px_56px_64px_0px] gap-0 items-cen
         <div className="bg-orange-900 text-white border-2 border-orange-400 rounded-lg shadow-2xl overflow-hidden w-full max-w-full">
             {/* Header */}
             <div className={`${gridLayout} bg-orange-400 text-orange-950 font-bold text-[10px] sm:text-xs h-7 sm:h-8`}>
-              <div className="text-left w-0 pl-3 sm:pl-4 px-0 uppercase text-xl sm:text-xl font-bold">{matchTitle}</div>
+              <div className="text-left w-0 pl-1 px-0 uppercase text-xl sm:text-xl font-bold whitespace-nowrap">{matchTitle}</div>
               <div>SET 1</div>
               <div>SET 2</div>
               <div>SET 3</div>
