@@ -9,25 +9,27 @@ import ResetIcon from './components/icons/ResetIcon.tsx';
 // --- SUB-COMPONENTS ---
 
 const TeamRow: React.FC<{ team: TeamState; isServing: boolean; }> = ({ team, isServing }) => (
-  <div className="pl-2 sm:pl-4 pr-2 py-2 h-full flex items-center gap-2">
-    <div className="text-left flex flex-col justify-center flex-grow overflow-hidden">
-      <p className="font-bold text-sm sm:text-base md:text-lg uppercase truncate">{team.player1.name}</p>
-      <p className="font-bold text-sm sm:text-base md:text-lg uppercase truncate">{team.player2.name}</p>
-    </div>
-    {/* Placeholder for alignment */}
-    <div className="w-2 h-2 md:w-3 md:h-3 flex-shrink-0">
-      {isServing && 
-        <div className="w-full h-full bg-yellow-400 rounded-full"></div>
-      }
+  <div className="h-full flex items-center px-0">
+    <div className="text-left pl-2 relative flex-1 min-w-0">
+      {isServing && (
+        <span className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-yellow-400 pointer-events-none" />
+      )}
+      <div>
+        <p className="font-bold text-sm sm:text-sm md:text-lg uppercase truncate leading-tight">{team.player1.name}</p>
+        <p className="font-bold text-sm sm:text-sm md:text-lg uppercase truncate leading-tight">{team.player2.name}</p>
+      </div>
     </div>
   </div>
 );
 
+
+
 const ScoreCell: React.FC<{ score: string | number; className?: string, animate?: boolean }> = ({ score, className = '', animate = false }) => (
-  <div className={`flex items-center justify-center h-full text-2xl sm:text-3xl md:text-4xl font-bold ${className} ${animate ? 'animate-flash' : ''}`}>
+  <div className={`flex items-center justify-center h-full text-2xl sm:text-3xl md:text-4xl font-extrabold ${className} ${animate ? 'animate-flash' : ''}`}>
     {score}
   </div>
 );
+
 
 const AddPointButton: React.FC<{ onClick: () => void; disabled: boolean }> = ({ onClick, disabled }) => (
     <div className="flex items-center justify-center h-full px-1 md:px-2">
@@ -179,8 +181,8 @@ const App: React.FC = () => {
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7L8 12" />
   </svg>
 );
-  const gridLayout = "grid grid-cols-[minmax(0,_2fr)_repeat(3,_minmax(0,_1fr))_minmax(0,_1fr)_auto] text-center";
-
+/// GRID COMPACTO: primera columna flexible para nombres, luego sets y game con ancho fijo (px)
+const gridLayout = "grid grid-cols-[1fr_56px_56px_56px_64px_0px] gap-0 items-center text-center";
   const getSetScore = (team: 'A' | 'B', setIndex: number): string | number => {
     const teamGames = team === 'A' ? teamA.games : teamB.games;
     if (setIndex < setScores.length) {
@@ -210,7 +212,7 @@ const App: React.FC = () => {
 
   if (appPhase === 'serverSelection') {
       return (
-          <div className="font-sans w-full max-w-md mx-auto text-gray-800">
+          <div className="font-sans w-full max-w-xl mx-auto text-gray-800">
              <div className="relative bg-orange-800 text-white border-2 border-orange-400 rounded-lg shadow-2xl p-8 text-center">
                 <h2 className="text-2xl font-bold mb-6">¿Quién saca primero?</h2>
                 <div className="grid grid-cols-1 gap-4">
@@ -229,17 +231,17 @@ const App: React.FC = () => {
 
   return (
     
-    <div className="font-sans w-full max-w-4xl mx-auto text-gray-800">
+    <div className="font-sans w-full max-w-[450px] mx-auto text-gray-800">
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-orange-600 mb-4 mt-6">
         Marcador de Pádel
       </h1>
       <div className="relative">
         
         
-        <div className="bg-orange-900 text-white border-2 border-orange-400 rounded-lg shadow-2xl overflow-hidden">
+        <div className="bg-orange-900 text-white border-2 border-orange-400 rounded-lg shadow-2xl overflow-hidden w-full max-w-full">
             {/* Header */}
-            <div className={`${gridLayout} bg-orange-400 text-orange-950 font-bold text-xs sm:text-sm h-8 sm:h-10 items-center`}>
-              <div className="text-left pl-2 sm:pl-4 uppercase">{matchTitle}</div>
+            <div className={`${gridLayout} bg-orange-400 text-orange-950 font-bold text-[10px] sm:text-xs h-7 sm:h-8`}>
+              <div className="text-left w-0 pl-3 sm:pl-4 px-0 uppercase text-xl sm:text-xl font-bold">{matchTitle}</div>
               <div>SET 1</div>
               <div>SET 2</div>
               <div>SET 3</div>
@@ -252,7 +254,7 @@ const App: React.FC = () => {
               <TeamRow team={teamA} isServing={server === 'A'} />
               {[0, 1, 2].map(i => <ScoreCell key={i} score={getSetScore('A', i)} />)}
               <ScoreCell score={isTiebreak ? teamA.points : teamA.points} className={gameScoreClass} animate={pointAnimation === 'A'} />
-              <div className="flex items-center justify-center h-full"> {/* Espacio vacío donde estaba el botón */}</div>
+              <div className="flex items-center justify-center w-0 h-full"> {/* Espacio vacío donde estaba el botón */}</div>
             </div>
 
             {/* Team B - Solo puntajes, sin botón + */}
@@ -260,7 +262,7 @@ const App: React.FC = () => {
               <TeamRow team={teamB} isServing={server === 'B'} />
               {[0, 1, 2].map(i => <ScoreCell key={i} score={getSetScore('B', i)} />)}
               <ScoreCell score={isTiebreak ? teamB.points : teamB.points} className={gameScoreClass} animate={pointAnimation === 'B'} />
-              <div className="flex items-center justify-center h-full"> {/* Espacio vacío donde estaba el botón */}</div>
+              <div className="flex items-center justify-center w-0 h-full"> {/* Espacio vacío donde estaba el botón */}</div>
             </div>
         </div>
         
